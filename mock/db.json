@@ -1,0 +1,50 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "student@mail.ru",
+      "password": "123456",
+      "name": "Студент"
+    }
+  ],
+  "todos": [
+    {
+      "id": "1",
+      "title": "открыть практику",
+      "completed": false,
+      "createdAt": "2026-10-20T09:00:00.000Z",
+      "userId": "1",
+      "tagIds": [
+        "1"
+      ]
+    },
+    {
+      "id": "2",
+      "title": "сдать список дел",
+      "completed": true,
+      "createdAt": "2026-10-21T12:30:00.000Z",
+      "userId": "1",
+      "tagIds": [
+        "1"
+      ]
+    },
+    {
+      "title": "купить хлеб",
+      "completed": false,
+      "createdAt": "2026-10-26T11:05:18.723Z",
+      "userId": "1",
+      "tagIds": [],
+      "id": "jQCbW7W"
+    }
+  ],
+  "tags": [
+    {
+      "id": "1",
+      "name": "учеба"
+    },
+    {
+      "id": "2",
+      "name": "дом"
+    }
+  ]
+}

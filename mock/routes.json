@@ -1,0 +1,5 @@
+{
+  "/tasks": "/todos",
+  "/tasks/:id": "/todos/:id",
+  "/profile/:id": "/users/:id"
+}
