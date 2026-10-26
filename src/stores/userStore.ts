@@ -57,11 +57,8 @@ export const useUserStore = defineStore('user', () => {
       return true;
     } catch (err: unknown) {
       const appError = toAppError(err);
-      if (
-        appError.kind === 'network' &&
-        emailCheck.data === 'student@mail.ru' &&
-        passwordCheck.data === '123456'
-      ) {
+      const demoLogin = emailCheck.data === 'student@mail.ru' && passwordCheck.data === '123456';
+      if (demoLogin && appError.kind !== 'auth') {
         offline.value = true;
         saveSession({
           token: 'local-demo',
