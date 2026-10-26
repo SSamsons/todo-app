@@ -1,38 +1,36 @@
-# Todo (todo-app)
+# Список дел
 
-## Install the dependencies
+Учебное ToDo на Vue 3, Quasar, TypeScript и Pinia. Интерфейс простой, без отдельного дизайна.
 
-```bash
-pnpm install
-# or: yarn/npm/bun install
-```
+Сайт: https://ssamsons.github.io/todo-app/
 
-### Start the app in development mode (HMR, error reporting, etc.)
+Тестовый вход: `student@mail.ru` / `123456`
 
-```bash
-quasar dev
-```
+На GitHub Pages своего сервера нет, поэтому этот вход работает прямо в браузере, а задачи остаются в нём же. Локально те же данные ходят на mock API.
 
-### Format & Lint the files
+## Как запустить у себя
+
+Нужна Node.js 22.22 или новее.
 
 ```bash
-pnpm run lint
-# or: yarn/npm/bun run lint
+npm install
+npm --prefix mock install
 ```
 
-...or just check formatting & linting:
+В двух терминалах:
 
 ```bash
-pnpm run lint:check
-# or: yarn/npm/bun run lint:check
+npm run mock
+npm run dev
 ```
 
-### Build the app for production
+Сайт откроется на http://localhost:9000, mock API слушает порт 3001.
 
-```bash
-quasar build
-```
+## Что есть на страницах
 
-### Customize the configuration
+- `/` — список, поиск, фильтр, добавление и удаление задач
+- `/login` — вход и регистрация
+- `/settings` — имя и тёмная тема
+- `/404` — страница для несуществующего адреса
 
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-file).
+Без входа список и настройки не открываются.

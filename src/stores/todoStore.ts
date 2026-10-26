@@ -23,8 +23,34 @@ export const useTodoStore = defineStore('todo', () => {
   const search = ref('');
   const { filtered } = useTodoFilter(todos, filter, search);
 
+  function keepsTasksLocally(): boolean {
+    return !userStore.isAuthenticated || userStore.offline;
+  }
+
   const loader = useAsync(async () => {
-    if (!userStore.isAuthenticated || userStore.user === null) return [...todos.value];
+    if (keepsTasksLocally() || userStore.user === null) {
+      if (userStore.offline && todos.value.length === 0) {
+        todos.value = [
+          {
+            id: 'demo-1',
+            title: 'открыть практику',
+            completed: false,
+            createdAt: '2026-10-20T09:00:00.000Z',
+            userId: 'local',
+            tagIds: [],
+          },
+          {
+            id: 'demo-2',
+            title: 'сдать список дел',
+            completed: true,
+            createdAt: '2026-10-21T12:30:00.000Z',
+            userId: 'local',
+            tagIds: [],
+          },
+        ];
+      }
+      return [...todos.value];
+    }
     const items = await listTodos(userStore.user.id);
     todos.value = items;
     return items;
@@ -59,7 +85,7 @@ export const useTodoStore = defineStore('todo', () => {
     }
 
     const clean = title.trim();
-    if (!userStore.isAuthenticated || userStore.user === null) {
+    if (keepsTasksLocally() || userStore.user === null) {
       const item: ITodoItem = {
         id: crypto.randomUUID(),
         title: clean,
@@ -99,7 +125,7 @@ export const useTodoStore = defineStore('todo', () => {
     if (!current) return;
     const completed = !current.completed;
 
-    if (!userStore.isAuthenticated) {
+    if (keepsTasksLocally()) {
       todos.value = todos.value.map((todo) => (todo.id === id ? { ...todo, completed } : todo));
       return;
     }
@@ -115,7 +141,7 @@ export const useTodoStore = defineStore('todo', () => {
   }
 
   async function deleteTodo(id: string): Promise<void> {
-    if (!userStore.isAuthenticated) {
+    if (keepsTasksLocally()) {
       todos.value = todos.value.filter((todo) => todo.id !== id);
       return;
     }

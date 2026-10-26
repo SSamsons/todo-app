@@ -1,5 +1,6 @@
 import { computed, readonly, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { z } from 'zod';
 import { settingsSchema, userSchema } from '@/types';
 import type { RegisterRequest, Session, UserSettings } from '@/types';
 import { useLocalStorage } from '@/composables/useLocalStorage';
@@ -17,12 +18,14 @@ export const useUserStore = defineStore('user', () => {
     settingsSchema,
   );
   const token = ref(readToken());
+  const offline = useLocalStorage('todo.offline', false, z.boolean());
   const loading = ref(false);
   const error = ref('');
 
   onTokensCleared(() => {
     token.value = '';
     user.value = null;
+    offline.value = false;
   });
 
   const isAuthenticated = computed(() => token.value.length > 0 && user.value !== null);
@@ -49,10 +52,25 @@ export const useUserStore = defineStore('user', () => {
     error.value = '';
     try {
       const session = await loginRequest(emailCheck.data, passwordCheck.data);
+      offline.value = false;
       saveSession(session);
       return true;
     } catch (err: unknown) {
-      error.value = toUserMessage(toAppError(err));
+      const appError = toAppError(err);
+      if (
+        appError.kind === 'network' &&
+        emailCheck.data === 'student@mail.ru' &&
+        passwordCheck.data === '123456'
+      ) {
+        offline.value = true;
+        saveSession({
+          token: 'local-demo',
+          refreshToken: 'local-demo',
+          user: { id: 'local', email: emailCheck.data, name: 'Студент' },
+        });
+        return true;
+      }
+      error.value = toUserMessage(appError);
       return false;
     } finally {
       loading.value = false;
@@ -95,7 +113,10 @@ export const useUserStore = defineStore('user', () => {
 
   async function saveSettings(next: UserSettings): Promise<void> {
     settings.value = next;
-    if (!user.value) return;
+    if (!user.value || offline.value) {
+      if (user.value) user.value = { ...user.value, name: next.name };
+      return;
+    }
     try {
       user.value = await updateProfile(user.value.id, next);
       error.value = '';
@@ -108,6 +129,7 @@ export const useUserStore = defineStore('user', () => {
     user: readonly(user),
     settings: readonly(settings),
     isAuthenticated,
+    offline: readonly(offline),
     loading: readonly(loading),
     error: readonly(error),
     login,
